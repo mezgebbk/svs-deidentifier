@@ -1,126 +1,139 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script> -->
         <link rel=icon href=/favicon.png>
         <meta name="viewport" content="width=device-width, height=device-height, user-scalable=0, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0">
         <meta charset="utf-8">
-        <title>WSI Deidentifier for Aperio SVS files</title>
+        <title>SVS De-ID</title>
 
         <script type='text/javascript' src='jquery.js'></script>
         <script type='text/javascript' src='/eel.js'></script>
         <script type='text/javascript' src='copy.js'></script>
         <script type='text/javascript' src='modify.js'></script>
         <script type='text/javascript' src='app.js'></script>
-        
+        <script type='text/javascript' src='ui.js'></script>
 
         <script type='text/javascript' src='bootstrap/js/bootstrap.bundle.min.js'></script>
         <script type='text/javascript' src='bootstrap/js/bootstrap.min.js'></script>
-        <link href='bootstrap/css/bootstrap.css' rel='stylesheet'>
         <link href='app.css' rel='stylesheet'>
         <base target="_blank">
     </head>
     <body>
-        <nav>
-            <div id='topbar-tabs' class="nav nav-tabs navbar-expand-sm navbar-light bg-light" role='tablist'>
-                <a class="nav-item nav-link active" data-toggle="tab" href="#home" id='home-tab' role="tab" aria-controls="home" aria-selected="true">Home</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <a class="nav-item nav-link" data-toggle="tab" href="#copy-and-delabel" id='copy-tab' role="tab" aria-controls="copy-and-delabel" aria-selected="false">Copy</a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#delabel-in-place" id='inplace-tab' role="tab" aria-controls="delabel-in-place" aria-selected="false">Modify</a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#readme" id='open-readme' role="tab" aria-controls="readme" aria-selected="false">Help</a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#settings" id='open-settings' role="tab" aria-controls="settings" aria-selected="false">Settings</a>
+        <header class='appbar'>
+            <div class='brand'>
+                <img src='favicon.png' alt=''>
+                <div>
+                    <div class='brand-name'>SVS De-ID</div>
+                    <div class='brand-sub'>Aperio whole slide image de-identifier</div>
                 </div>
             </div>
-            <!-- </div> -->
-        </nav>
-        <div class='tab-content'>
+            <nav id='topbar-tabs' class="nav nav-tabs" role='tablist'>
+                <a class="nav-item nav-link active" data-toggle="tab" href="#home" id='home-tab' role="tab" aria-controls="home" aria-selected="true">
+                    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#copy-and-delabel" id='copy-tab' role="tab" aria-controls="copy-and-delabel" aria-selected="false">
+                    <svg viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>Copy</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#delabel-in-place" id='inplace-tab' role="tab" aria-controls="delabel-in-place" aria-selected="false">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Modify</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#readme" id='open-readme' role="tab" aria-controls="readme" aria-selected="false">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5h.01"/></svg>Help</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#settings" id='open-settings' role="tab" aria-controls="settings" aria-selected="false">
+                    <svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Settings</a>
+            </nav>
+        </header>
+
+        <main class='tab-content'>
             <div id='home' class='tab-pane show active' role='tabpanel' aria-labelledby='home-tab'></div>
             <div id='copy-and-delabel' class='tab-pane' role="tabpanel" aria-labelledby="copy-tab"></div>
             <div id='delabel-in-place' class='tab-pane' role="tabpanel" aria-labelledby="inplace-tab"></div>
             <div id='settings' class='tab-pane' role="tabpanel" aria-labelledby="open-settings">
-                <div class='markdown'></div>
-                <div><button class='ok btn btn-primary'>Confirm choices</button></div>
+                <div class='markdown card'></div>
+                <div class='page-actions'><button class='ok btn btn-primary'>Confirm choices</button></div>
             </div>
             <div id='readme' class='tab-pane' role="tabpanel" aria-labelledby="open-readme">
-                <div class='markdown help'></div>
+                <div class='markdown help card'></div>
                 <div class='readme-header'>More information from the <a href='https://github.com/pearcetm/svs-deidentifier'>project GitHub page</a>:</div>
-                <div class='markdown readme'></div>
+                <div class='markdown readme card'></div>
             </div>
-        </div>
-        
+        </main>
 
         <div class='overlay'>
             <div class='overlay-background'></div>
             <div class='overlay-content'>
-                
+
             </div>
             <div class='overlay-dialogs'>
                 <div class='overlay-dialog select-target'>
-                    <h3>Select a directory to copy files into</h3>
+                    <h3>Choose a destination folder</h3>
                     <h4>Found <span class='num-files'></span> whole slide image<span class='plural-s'>s</span> to de-identify</h4>
-                    
+
                     <div class='dest-selection'>
                         <span class='destination'></span>
-                        <button class='pick-destination'>Choose Folder</button>
-                        <button class='remove-button'>X</button>
+                        <button class='pick-destination btn-secondary'>Choose folder…</button>
+                        <button class='remove-button' title='Clear'>&times;</button>
                     </div>
-                    
+
                     <div class='buttons'>
-                        <button class='ok btn btn-primary'>OK</button>
-                        <button class='cancel btn btn-primary'>Cancel</button>
+                        <button class='cancel btn btn-secondary'>Cancel</button>
+                        <button class='ok btn btn-primary'>Continue</button>
                     </div>
                 </div>
 
                 <div class='overlay-dialog choose-file'>
-                    <h3>Opening system file dialog</h3>
-                    <div>Please select a file/folder</div>
-                    <!-- <div>Note: the dialog may open behind other windows, especially on Mac platforms</div> -->
+                    <div class='spinner'></div>
+                    <h3>Waiting for the file dialog</h3>
+                    <div class='muted'>Pick files or a folder in the system window. It may open behind this one.</div>
                 </div>
 
                 <div class='overlay-dialog failed'>
-                    <h3>Copy and de-identification error</h3>
+                    <h3>Copy and de-identification failed</h3>
                     <h4 class='error-message'></h4>
                     <div class='buttons'>
-                        <button class='ok btn btn-primary'>Edit and retry?</button>
                         <button class='cancel btn btn-secondary'>Close</button>
+                        <button class='ok btn btn-primary'>Edit and retry</button>
                     </div>
                 </div>
 
                 <div class='overlay-dialog confirm'>
-                    <h3>WARNING: this is PERMANENT - are you sure?</h3>
-                    <div><button class='ok btn btn-primary'>Yes, I know what I'm doing</button></div>
-                    <div>OR</div>
-                    <div><button class='cancel btn btn-primary'>Nevermind</button></div>
+                    <div class='warn-icon'>!</div>
+                    <h3>This permanently changes the original files</h3>
+                    <div class='muted'>Label and macro images will be erased from every listed file. This cannot be undone.</div>
+                    <div class='buttons'>
+                        <button class='cancel btn btn-secondary'>Cancel</button>
+                        <button class='ok btn btn-danger'>Yes, modify the files</button>
+                    </div>
                 </div>
-                
+
             </div>
         </div>
         <div class='templates'>
             <div id='copy-tab-contents'>
-                <h2 class='centered'>Create de-labeled copies of WSIs</h2>
-                <div class='header'>                    
-                    <label>Step 1: </label>
-                    <button class='pick-files'>Choose File(s)</button>
-                    <span class='label'>Select .svs files, or a .csv with a file list</span>
+                <div class='page-head'>
+                    <span class='badge badge-safe'>Originals untouched</span>
+                    <h1>Create de-labelled copies</h1>
+                    <p class='lead'>Copies your slides to a new folder, then removes the label and macro images from the copies.</p>
+                </div>
+                <div class='header step-card'>
+                    <span class='step'>1</span>
+                    <div class='step-body'>
+                        <div class='step-title'>Choose slides</div>
+                        <span class='label'>Select .svs files, or a .csv with a file list</span>
+                    </div>
+                    <button class='pick-files btn-primary'>Choose files…</button>
                 </div>
                 <div class='filesetlist'></div>
                 <div class='templates'>
                     <div class="fileset">
-                        <div>
-                            <label>Step 2: </label>
-                            <button class='deidentify-fileset' disabled>Copy and remove identifying images from WSIs</button>
+                        <div class='fileset-toolbar'>
+                            <span class='step'>2</span>
+                            <button class='deidentify-fileset btn-primary' disabled>Copy and remove identifying images</button>
                             <span class='time-remaining'></span>
                         </div>
                         <div class="columns fileset-header">
-                            <div class="oneline"><h4>Files to copy: <span class="num-files"></span><button class="add-files">+</button></h4></div>
-                            <div class="columns target-field"><h4 class="left-ellipsis-outer"><span class="left-ellipsis-inner target filepath"></span></h4><button class="change-target">Choose</button>
-                                <div class="oneline"><h4>Total size:<span class="totalsize"></span> (<span class="freespace"></span> available)</h4></div>
-                            </div>
+                            <div class="oneline stat"><h4>Files <span class="num-files"></span></h4><button class="add-files" title="Add more files">+ Add</button></div>
+                            <div class="columns target-field"><h4 class="left-ellipsis-outer"><span class="left-ellipsis-inner target filepath"></span></h4><button class="change-target">Change</button></div>
+                            <div class="oneline stat"><h4>Size <span class="totalsize"></span> <small>(<span class="freespace"></span> free)</small></h4></div>
                         </div>
-                        <button class="clear-fileset remove-button">X</button>
+                        <button class="clear-fileset remove-button" title="Clear this batch">&times;</button>
                         <div class="filelist"></div>
                     </div>
                     <div class="columns file">
@@ -135,7 +148,7 @@
                                 <div class="filedest">
                                     <input class="dest" placeholder="Enter a file name">
                                 </div>
-                                <button class="remove-button" title="Remove item">X</button>
+                                <button class="remove-button" title="Remove item">&times;</button>
                             </div>
                         </div>
                     </div>
@@ -143,30 +156,42 @@
             </div>
 
             <div id='modify-tab-contents'>
-                <h2 class='centered'>Remove identifying images from existing WSIs</h2>
-                <div class='header'>                    
-                    <label>Step 1: Choose </label>
-                    <button class='pick-files'>Specific File(s)</button>
-                     or
-                    <button class='pick-folder'>Entire Directory (with subdirectories)</button>
+                <div class='page-head'>
+                    <span class='badge badge-danger'>Permanent</span>
+                    <h1>Modify existing slides</h1>
+                    <p class='lead'>Erases the label and macro images inside the original files. Fast, but it cannot be undone.</p>
+                </div>
+                <div class='header step-card'>
+                    <span class='step'>1</span>
+                    <div class='step-body'>
+                        <div class='step-title'>Choose slides</div>
+                        <span class='label'>Pick specific files, or a whole folder including subfolders</span>
+                    </div>
+                    <button class='pick-files btn-secondary'>Files…</button>
+                    <button class='pick-folder btn-primary'>Folder…</button>
                 </div>
                 <div class='filesetlist'></div>
                 <div class='templates'>
                     <div class="fileset">
-                        <div>
-                            <label>Step 2: </label><button class='deidentify-fileset'>Delete label and macro images from WSIs</button>
+                        <div class='fileset-toolbar'>
+                            <span class='step'>2</span>
+                            <button class='deidentify-fileset btn-danger'>Delete label and macro images</button>
                         </div>
                         <div class="fileset-header">
-                            <div class="modify-info oneline">
-                                <h4>Files to de-label: <span class="num-files"></span>
-                                    <button class="add-files">+</button> <span class='num-both'></span> with label and macro, <span class='num-labels'></span> label only, <span class='num-macros'></span> macro only, <span class='num-neither'></span> neither, <span class='num-readonly'></span> read-only
+                            <div class="modify-info">
+                                <h4><span class='stat-main'>Files to de-label <span class="num-files"></span><button class="add-files" title="Add more files">+ Add</button></span>
+                                    <span class='pill'><span class='num-both'></span> label + macro</span>
+                                    <span class='pill'><span class='num-labels'></span> label only</span>
+                                    <span class='pill'><span class='num-macros'></span> macro only</span>
+                                    <span class='pill'><span class='num-neither'></span> neither</span>
+                                    <span class='pill'><span class='num-readonly'></span> read-only</span>
                                 </h4>
-                            </div> 
+                            </div>
                             <div class='modify-results oneline'>
-                                <h4><span class='num-succeeded'></span> WSIs delabeled; <span class='num-failed'></span> errors</h4>
+                                <h4><span class='pill pill-ok'><span class='num-succeeded'></span> de-labelled</span> <span class='pill pill-err'><span class='num-failed'></span> errors</span></h4>
                             </div>
                         </div>
-                        <button class="clear-fileset remove-button">X</button>
+                        <button class="clear-fileset remove-button" title="Clear this batch">&times;</button>
                         <div class="filelist"></div>
                     </div>
                     <div class="columns file">
@@ -174,42 +199,47 @@
                             <div class="left-ellipsis-outer">
                                 <div class="filepath sourcefile left-ellipsis-inner"></div>
                             </div>
-                            
+
                         </div>
                         <div class="file-status status"></div>
                         <div class="label-status status"></div>
                         <div class="macro-status status"></div>
-                        <button class="remove-button" title="Remove item">X</button>
-                        
+                        <button class="remove-button" title="Remove item">&times;</button>
+
                     </div>
                 </div>
             </div>
 
             <div id='home-tab-contents'>
-                <h2>De-identification Tool for Aperio .SVS whole slide images</h2>
-                <p>Whole slide images can potentially contain identifying patient information printed on the slide label. Depending on the scanner settings at the time of whole slide imaging, Aperio .svs files can store this information internally in the form of images of the slide label, and occasionally label text is visible in the macro image as well.</p>
-                <p>This tool removes the label and macro images from .svs files, making them safe to share in research settings where patient identifiers are not allowed.</p>
-                <p>The app can be used in two modes:
-                    <ul>
-                    <li><h3>Create a deidentified COPY of whole slide images</h3>
-                            <ul>
-                                <li><b>Slower</b> - large files can take time to copy</li>
-                                <li><b>Safe</b> - the original files are not modified</li>
-                            </ul>
-                        </li>
-                        <br>
-                        <li><h3>MODIFY existing whole slide image files</h3>
-                            <ul>
-                                <li><b>Faster</b> - no copy operation needed</li>
-                                <li><b>Dangerous</b> - permanently changes the original file</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </p>
-                <p>Use the tabs at the top of the page to get started. Be sure to review the settings page to customize how the app works on this computer.</p> 
-
+                <section class='hero'>
+                    <h1>Remove patient identifiers from Aperio slides</h1>
+                    <p class='lead'>Aperio .svs files can store a photo of the slide label, and sometimes label text shows in the macro image. This tool removes both images so slides can be shared for research.</p>
+                </section>
+                <div class='mode-cards'>
+                    <button class='mode-card' data-goto='#copy-tab'>
+                        <span class='badge badge-safe'>Recommended</span>
+                        <span class='mode-title'>Copy</span>
+                        <span class='mode-desc'>Make de-identified copies in a new folder.</span>
+                        <ul>
+                            <li><b>Safe</b>: the original files are not modified</li>
+                            <li><b>Slower</b>: large files take time to copy</li>
+                        </ul>
+                        <span class='mode-go'>Start copying &rarr;</span>
+                    </button>
+                    <button class='mode-card danger' data-goto='#inplace-tab'>
+                        <span class='badge badge-danger'>Permanent</span>
+                        <span class='mode-title'>Modify</span>
+                        <span class='mode-desc'>Remove the images from the original files.</span>
+                        <ul>
+                            <li><b>Fast</b>: nothing is copied</li>
+                            <li><b>Dangerous</b>: permanently changes the original file</li>
+                        </ul>
+                        <span class='mode-go'>Modify in place &rarr;</span>
+                    </button>
+                </div>
+                <p class='muted home-foot'>Check the <a href='#settings' data-goto='#open-settings' target='_self'>Settings</a> page to choose how file dialogs behave on this computer.</p>
             </div>
 
-        </div>    
+        </div>
     </body>
-</html> 
+</html>

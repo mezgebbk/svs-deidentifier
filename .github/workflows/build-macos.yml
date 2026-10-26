@@ -1,0 +1,84 @@
+name: Build macOS app
+
+# Run manually from the Actions tab, or automatically when a v* tag is pushed.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15        # Apple Silicon
+            arch: arm64
+          - runner: macos-15-intel  # Intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    env:
+      APP_NAME: SVS De-ID
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies (prebuilt wheels only)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --only-binary PyQt5,PyQt5-Qt5,PyQtWebEngine,PyQtWebEngine-Qt5 -r requirements.txt
+
+      - name: Confirm architecture
+        run: |
+          arch="$(python -c 'import platform; print(platform.machine())')"
+          echo "Python architecture: $arch"
+          test "$arch" = "${{ matrix.arch }}"
+
+      # Same PyInstaller-via-eel command as build.py, in one-dir .app form
+      # (the README notes QWebEngine does not work in one-file mode on macOS).
+      - name: Build .app
+        run: |
+          python -m eel deid-qwebengine.py web \
+            --name "$APP_NAME" --onedir --windowed --noconfirm \
+            --icon=icon.icns --add-data '*.md:.' \
+            --osx-bundle-identifier io.github.pearcetm.svsdeidentifier
+
+      # Apple Silicon refuses to run unsigned code; an ad-hoc signature is enough
+      # for a locally-trusted app (Gatekeeper will still ask once, see README).
+      - name: Ad-hoc sign
+        run: |
+          codesign --force --deep --sign - "dist/$APP_NAME.app"
+          codesign --verify --deep --strict --verbose=2 "dist/$APP_NAME.app"
+
+      - name: Smoke test (app starts and serves its UI)
+        run: |
+          "dist/$APP_NAME.app/Contents/MacOS/$APP_NAME" > smoke.log 2>&1 &
+          pid=$!
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/app.html | grep -q 'SVS De-ID'; then ok=1; break; fi
+            sleep 2
+          done
+          kill $pid 2>/dev/null || true
+          cat smoke.log
+          test $ok = 1
+
+      - name: Package .dmg
+        run: |
+          mkdir dmg
+          ditto "dist/$APP_NAME.app" "dmg/$APP_NAME.app"
+          ln -s /Applications dmg/Applications
+          hdiutil create -volname "$APP_NAME" -srcfolder dmg -ov -format UDZO \
+            "SVS-De-ID-macOS-${{ matrix.arch }}.dmg"
+
+      # Upload the .dmg, not the .app: artifact zips drop the symlinks and
+      # executable bits an .app bundle needs.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SVS-De-ID-macOS-${{ matrix.arch }}
+          path: SVS-De-ID-macOS-${{ matrix.arch }}.dmg
+          if-no-files-found: error
