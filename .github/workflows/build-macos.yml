@@ -1,4 +1,4 @@
-name: Build macOS app
+name: Build apps (macOS + Windows)
 
 # Run manually from the Actions tab, or automatically when a v* tag is pushed.
 on:
@@ -44,7 +44,7 @@ jobs:
         run: |
           python -m eel deid-qwebengine.py web \
             --name "$APP_NAME" --onedir --windowed --noconfirm \
-            --icon=icon.icns --add-data '*.md:.' \
+            --icon=icon.icns --add-data '*.md:.' --add-data 'LICENSE:.' \
             --osx-bundle-identifier io.github.pearcetm.svsdeidentifier
 
       # Apple Silicon refuses to run unsigned code; an ad-hoc signature is enough
@@ -81,4 +81,44 @@ jobs:
         with:
           name: SVS-De-ID-macOS-${{ matrix.arch }}
           path: SVS-De-ID-macOS-${{ matrix.arch }}.dmg
+          if-no-files-found: error
+
+  windows:
+    name: Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies (prebuilt wheels only)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --only-binary PyQt5,PyQt5-Qt5,PyQtWebEngine,PyQtWebEngine-Qt5 -r requirements.txt
+
+      # One-file .exe with the built-in browser, like the original Windows release
+      - name: Build .exe
+        run: python -m eel deid-qwebengine.py web --name "SVS-De-ID" --onefile --windowed --noconfirm --icon=icon.ico --add-data "*.md;." --add-data "LICENSE;."
+
+      - name: Smoke test (app starts and serves its UI)
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath dist\SVS-De-ID.exe -PassThru
+          $ok = $false
+          foreach ($i in 1..45) {
+            try {
+              $r = Invoke-WebRequest http://localhost:8000/app.html -UseBasicParsing -TimeoutSec 3
+              if ($r.Content -match 'SVS De-ID') { $ok = $true; break }
+            } catch {}
+            Start-Sleep 2
+          }
+          Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+          if (-not $ok) { throw 'App did not serve its UI' }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SVS-De-ID-Windows-x64
+          path: dist/SVS-De-ID.exe
           if-no-files-found: error

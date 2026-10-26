@@ -4,7 +4,7 @@
         <link rel=icon href=/favicon.png>
         <meta name="viewport" content="width=device-width, height=device-height, user-scalable=0, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0">
         <meta charset="utf-8">
-        <title>SVS De-ID</title>
+        <title>SVS De-ID · DPLM, University of Calgary</title>
 
         <script type='text/javascript' src='jquery.js'></script>
         <script type='text/javascript' src='/eel.js'></script>
@@ -25,6 +25,13 @@
                 <div>
                     <div class='brand-name'>SVS De-ID</div>
                     <div class='brand-sub'>Aperio whole slide image de-identifier</div>
+                </div>
+                <div class='dept-mark' title='DPLM, University of Calgary'>
+                    <span class='dept-bar'></span>
+                    <div>
+                        <div class='dept-name'>DPLM</div>
+                        <div class='dept-org'>University of Calgary</div>
+                    </div>
                 </div>
             </div>
             <nav id='topbar-tabs' class="nav nav-tabs" role='tablist'>
@@ -51,10 +58,18 @@
             </div>
             <div id='readme' class='tab-pane' role="tabpanel" aria-labelledby="open-readme">
                 <div class='markdown help card'></div>
-                <div class='readme-header'>More information from the <a href='https://github.com/pearcetm/svs-deidentifier'>project GitHub page</a>:</div>
                 <div class='markdown readme card'></div>
+                <div class='contact-card card'>
+                    <div>
+                        <div class='step-title'>Questions or problems?</div>
+                        <div class='muted'>Contact Biniyam Kahsay Mezgeb, DPLM, University of Calgary</div>
+                    </div>
+                    <span class='contact-email'>biniyamkahsay.mezgeb@ucalgary.ca</span>
+                    <button class='copy-email btn-secondary' data-email='biniyamkahsay.mezgeb@ucalgary.ca'>Copy email</button>
+                </div>
             </div>
         </main>
+        <footer class='app-footer'>SVS De-ID &middot; DPLM, University of Calgary</footer>
 
         <div class='overlay'>
             <div class='overlay-background'></div>
@@ -212,6 +227,7 @@
 
             <div id='home-tab-contents'>
                 <section class='hero'>
+                    <span class='eyebrow'>DPLM &middot; University of Calgary</span>
                     <h1>Remove patient identifiers from Aperio slides</h1>
                     <p class='lead'>Aperio .svs files can store a photo of the slide label, and sometimes label text shows in the macro image. This tool removes both images so slides can be shared for research.</p>
                 </section>

@@ -21,6 +21,9 @@
 	--warn-soft:#fff6db;
 	--shadow:0 1px 2px rgba(16,24,40,.05), 0 4px 16px rgba(16,24,40,.06);
 	--radius:12px;
+	--uc-red:#d6001c;
+	--uc-red-text:#b5001a;
+	--uc-gold:#ffcd00;
 	color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
@@ -43,6 +46,7 @@
 		--err-soft:#3a1c1c;
 		--warn-soft:#3a3218;
 		--shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+		--uc-red-text:#ff6b6b;
 		color-scheme:dark;
 	}
 }
@@ -84,6 +88,38 @@ h1,h2,h3,h4{ line-height:1.25; }
 .brand img{ width:34px; height:34px; border-radius:8px; margin-right:10px; }
 .brand-name{ font-weight:700; font-size:15px; letter-spacing:-.01em; }
 .brand-sub{ font-size:12px; color:var(--muted); }
+
+/* Department mark: University of Calgary red with a gold accent */
+.dept-mark{
+	display:flex;
+	align-items:center;
+	margin-left:18px;
+	padding-left:18px;
+	border-left:1px solid var(--border);
+}
+.dept-bar{
+	width:5px;
+	height:30px;
+	border-radius:3px;
+	margin-right:9px;
+	background:linear-gradient(to bottom, var(--uc-red) 0 68%, var(--uc-gold) 68% 100%);
+}
+.dept-name{ font-weight:800; font-size:14px; letter-spacing:.08em; color:var(--uc-red-text); line-height:1.15; }
+.dept-org{ font-size:11.5px; color:var(--muted); line-height:1.25; }
+.eyebrow{
+	display:inline-block;
+	font-size:12px;
+	font-weight:700;
+	letter-spacing:.08em;
+	text-transform:uppercase;
+	color:var(--uc-red-text);
+	padding-left:10px;
+	border-left:3px solid var(--uc-gold);
+}
+.contact-card{ display:flex; align-items:center; flex-wrap:wrap; padding:16px 20px; margin-top:8px; border-left:4px solid var(--uc-red); }
+.contact-card>div{ flex:1 1 260px; margin:4px 0; }
+.contact-email{ font-weight:600; margin:4px 12px 4px 0; user-select:all; }
+.app-footer{ text-align:center; font-size:12px; color:var(--muted); padding:0 16px 24px; }
 
 .nav{ display:flex; flex-wrap:wrap; margin:0; padding:4px; list-style:none; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; }
 .nav-link{
@@ -485,6 +521,7 @@ input.dest:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px
 @media (max-width:720px){
 	.appbar{ padding:10px 14px; }
 	.brand{ margin-bottom:8px; }
+	.brand-sub{ display:none; }
 	.tab-content{ padding:20px 14px 40px; }
 	.step-card{ flex-wrap:wrap; }
 	.file{ flex-wrap:wrap; }

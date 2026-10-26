@@ -148,7 +148,8 @@ def settings():
 
 @route('/readme')
 def readme():
-    with open(resource_path('.')+'/README.md','r') as fp, open(resource_path('.')+'/help.md','r') as hp:
+    # In-app help: the user-facing guide (README.md keeps the developer/build notes)
+    with open(resource_path('.')+'/USER_GUIDE.md','r') as fp, open(resource_path('.')+'/help.md','r') as hp:
         d = {
             'readme':commonmark.commonmark(fp.read()),
             'help':commonmark.commonmark(hp.read())
